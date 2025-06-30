@@ -1,0 +1,1 @@
+Simple integrity check program that will enumerate files in a specified directory and create an output file with the file name and the corresponding SHA256 hash. To check the integrity of files, simply specify the directory and the file that contains the hash value.
