@@ -26,9 +26,9 @@ def load_hashes(hash_file: str) -> Dict[str, str]:
     hashes = {}
     with open(hash_file, 'r') as f:
         for line in f:
-            if ':' in line:
-                name, hashval = line.strip().split(':', 1)
-                hashes[name] = hashval
+            if ':::' in line:
+                rel_path, hashval = line.strip().split(':::', 1)
+                hashes[rel_path] = hashval
     return hashes
 
 
@@ -41,6 +41,7 @@ def verify_hashes(directory: str, hash_file: str):
         exit(1)
 
     hashes = load_hashes(hash_file)
+    print(f"[DEBUG] Loaded hash keys: {list(hashes.keys())}")
     verified_count = 0
     failed_count = 0
     results = []
@@ -52,17 +53,19 @@ def verify_hashes(directory: str, hash_file: str):
     for root, _, files in os.walk(directory):
         for file in files:
             filepath = os.path.join(root, file)
+            rel_path = os.path.relpath(filepath, directory)
+            print(f"[DEBUG] Verifying: rel_path='{rel_path}' for file '{filepath}'")
             hash_value = calculate_sha256(filepath)
-            expected_hash = hashes.get(file)
+            expected_hash = hashes.get(rel_path)
             if expected_hash == hash_value:
                 status = colored('verified', 'green')
                 verified_count += 1
             else:
                 status = colored('failed verification', 'red')
                 failed_count += 1
-            dash_count = status_col - len(file)
+            dash_count = status_col - len(rel_path)
             dashes = '-' * dash_count
-            result_line = f"{file} {dashes} {status}"
+            result_line = f"{rel_path} {dashes} {status}"
             print(result_line)
             results.append(result_line)
 
@@ -117,9 +120,11 @@ def main():
             for root, _, files in os.walk(directory):
                 for file in files:
                     filepath = os.path.join(root, file)
+                    rel_path = os.path.relpath(filepath, directory)
+                    print(f"[DEBUG] Writing: rel_path='{rel_path}' for file '{filepath}'")
                     try:
                         hash_value = calculate_sha256(filepath)
-                        out.write(f"{file}:{hash_value}\n")
+                        out.write(f"{rel_path}:::{hash_value}\n")
                     except Exception as e:
                         print(f"Failed to hash {filepath}: {e}")
     elif args.verify:
