@@ -1,7 +1,6 @@
 # Backup Integrity Check
 
 Simple integrity check program that will enumerate files in a specified directory and create an output file with the file name and the corresponding SHA256 hash.
-While backing up files
 
 ## Basic Usage
 Example of generating hash values for user `foo` for all the files in the user's "Documents" directory:
@@ -23,8 +22,7 @@ If you do not have termcolor module, make sure to download it for your system. O
 In Linux, use your terminal to create and navigate to the directory where you want this script to be saved. Example `mkdir -p /home/[user_name]/applications && cd /home/[user_name]/applications` and make sure to replace '[user_name]' with the actual user on your system.
 
 ### Clone this repository and make it your working directory
-`git clone https://github.com/bash-against-the-machine/backup-integrity-check.git`
-`cd backup-integrity-check`
+`git clone https://github.com/bash-against-the-machine/backup-integrity-check.git && cd backup-integrity-check`
 
 ### Add execution permission to the python script
 `chmod +x buic.py`
@@ -41,8 +39,10 @@ You can run the script from any directory, just make sure to use the absolute pa
 `python3 /home/[user_name]/applications/backup-integrity-check/buic.py -v /home/[user_name]/Documents /home/[user_name]/backup_hashes.txt`
 #### Create an alias in Linux in lieu of file path of the script
 Use Nano text editor to add an alias:
-`nano ~/.bashrc`
-Add the following line to the end of the file (make sure to replace '[user_name] with the name of the user you're logged in as):
+`nano ~/.bashrc`.
+
+Add the following line to the end of the file (make sure to replace '[user_name]' with the name of the user you're logged in as):
 `alias buic='/home/[user_name]/applications/backup-integrity-check/buic.py'`
-Press CTRL+O to save the file, press ENTER key, then press CTRL+X to exit the terminal. Close and relaunch the terminal. You can now substitute the file path of the `buic.py` script by simply typing `buic` followed by the -p or -v arguments and the directory/filepath.
-<sub>Note: your `~/.basrc` may say that the best practice is to keep aliases in a seprate `~/.bash_aliases` file. If that is the case then instead of `nano ~/.bashrc` run `nano ~/.bash_aliases` and add the alias line in that file.</sub>
+Press CTRL+O to save the file, press ENTER key, then press CTRL+X to exit Nano editor. Close and relaunch the terminal. You can now substitute the file path of the `buic.py` script by simply typing `buic` followed by the -b or -v arguments and the directory/filepath.
+
+<sub>Note: your `~/.basrc` file may say that the best practice is to keep aliases in a seprate `~/.bash_aliases` file. If that is the case then instead of running `nano ~/.bashrc` run `nano ~/.bash_aliases` and add the alias line in that file.</sub>
