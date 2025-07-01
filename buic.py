@@ -41,7 +41,6 @@ def verify_hashes(directory: str, hash_file: str):
         exit(1)
 
     hashes = load_hashes(hash_file)
-    print(f"[DEBUG] Loaded hash keys: {list(hashes.keys())}")
     verified_count = 0
     failed_count = 0
     results = []
@@ -54,7 +53,6 @@ def verify_hashes(directory: str, hash_file: str):
         for file in files:
             filepath = os.path.join(root, file)
             rel_path = os.path.relpath(filepath, directory)
-            print(f"[DEBUG] Verifying: rel_path='{rel_path}' for file '{filepath}'")
             hash_value = calculate_sha256(filepath)
             expected_hash = hashes.get(rel_path)
             if expected_hash == hash_value:
@@ -116,17 +114,37 @@ def main():
             print(f"Error: {directory} is not a valid directory.")
             exit(1)
         output_file = 'backup_hashes.txt'
+        # Collect all files first for progress bar
+        all_files = []
+        for root, _, files in os.walk(directory):
+            for file in files:
+                filepath = os.path.join(root, file)
+                rel_path = os.path.relpath(filepath, directory)
+                all_files.append((filepath, rel_path))
+        total_files = len(all_files)
         with open(output_file, 'w') as out:
-            for root, _, files in os.walk(directory):
-                for file in files:
-                    filepath = os.path.join(root, file)
-                    rel_path = os.path.relpath(filepath, directory)
-                    print(f"[DEBUG] Writing: rel_path='{rel_path}' for file '{filepath}'")
-                    try:
-                        hash_value = calculate_sha256(filepath)
-                        out.write(f"{rel_path}:::{hash_value}\n")
-                    except Exception as e:
-                        print(f"Failed to hash {filepath}: {e}")
+            for idx, (filepath, rel_path) in enumerate(all_files, 1):
+                # Clear the line before printing the new file name
+                print('\r' + ' ' * 70 + '\r', end='')
+                # Limit the display to 80 characters total
+                display_text = f"Hashing: {rel_path}"
+                if len(display_text) > 70:
+                    # Truncate the path and add ellipsis
+                    max_path_len = 70 - len("Hashing: ...")
+                    truncated_path = rel_path[:max_path_len] + "..."
+                    display_text = f"Hashing: {truncated_path}"
+                print(display_text, end='\r')
+                try:
+                    hash_value = calculate_sha256(filepath)
+                    out.write(f"{rel_path}:::{hash_value}\n")
+                except Exception as e:
+                    print(f"Failed to hash {filepath}: {e}")
+                # Progress bar
+                percent = int((idx / total_files) * 100)
+                bar_len = 60
+                filled_len = int(bar_len * idx // total_files)
+                bar = '#' * filled_len + '-' * (bar_len - filled_len)
+                print(f"\n[{bar}] {percent}% ({idx}/{total_files})", end='\033[F' if idx < total_files else '\n')
     elif args.verify:
         verify_hashes(args.verify[0], args.verify[1])
     else:
