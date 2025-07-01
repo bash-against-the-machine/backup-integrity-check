@@ -1,6 +1,7 @@
 # Backup Integrity Check
 
-Simple integrity check program that will enumerate files in a specified directory and create an output file with the file name and the corresponding SHA256 hash. To verify integrity of files, run the script again with the -v switch followed by the directory where the backup file are located and the file that contains the file names and hashes.
+Simple integrity check program that will enumerate files in a specified directory and create an output file with the file name and the corresponding SHA256 hash.
+While backing up files
 
 ## Basic Usage
 Example of generating hash values for user `foo` for all the files in the user's "Documents" directory:
@@ -19,7 +20,7 @@ or
 If you do not have termcolor module, make sure to download it for your system. On Linux system to install it system-wide run `sudo apt install python3-termcolor -y` or `sudo dnf install python3-termcolor -y` depending on your distribution. Ensure you have `git` installed as well: `sudo apt install git -y` or `sudo dnf install git -y`.
 
 ### Navigate to the directory where you want to save this script
-In Linux, use your terminal to create and navigate to the directory where you want this script to be saved. Example `mkdir -p /home/[user_name]/applications && /home/[user_name]/applications` and make sure to replace '[user_name]' with the actual user on your system.
+In Linux, use your terminal to create and navigate to the directory where you want this script to be saved. Example `mkdir -p /home/[user_name]/applications && cd /home/[user_name]/applications` and make sure to replace '[user_name]' with the actual user on your system.
 
 ### Clone this repository and make it your working directory
 `git clone https://github.com/bash-against-the-machine/backup-integrity-check.git`
