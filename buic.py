@@ -4,6 +4,7 @@ import argparse
 import os
 import hashlib
 from typing import Dict
+import datetime
 
 try:
     from termcolor import colored
@@ -88,7 +89,11 @@ def verify_hashes(directory: str, hash_file: str):
 
 
     # File Summary
-    with open('backup_verification_summary.txt', 'w') as out:
+    now = datetime.datetime.now()
+    abs_dir = os.path.abspath(directory)
+    dir_part = abs_dir.lstrip(os.sep).replace(os.sep, '_')
+    summary_file = f"{dir_part}_hashverified_{now:%m_%d_%Y}.txt"
+    with open(summary_file, 'w') as out:
         for line in results:
             out.write(line + '\n')
         out.write(f"\n{top_bottom_border}\n")
@@ -113,7 +118,10 @@ def main():
         if not os.path.isdir(directory):
             print(f"Error: {directory} is not a valid directory.")
             exit(1)
-        output_file = 'backup_hashes.txt'
+        now = datetime.datetime.now()
+        abs_dir = os.path.abspath(directory)
+        dir_part = abs_dir.lstrip(os.sep).replace(os.sep, '_')
+        output_file = f"{dir_part}_hashes_{now:%m_%d_%Y}.txt"
         # Collect all files first for progress bar
         all_files = []
         for root, _, files in os.walk(directory):
